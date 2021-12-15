@@ -1,0 +1,39 @@
+version: "3"
+services:
+    canal:
+        image: canal/canal-server
+        container_name: canal-server
+        ports:
+            - "9100:9100"
+            - "1110:1110"
+            - "1111:1111"
+            - "1112:1112"
+        volumes:
+            - ./conf/instance.properties:/home/admin/canal-server/conf/example/instance.properties
+            - ./conf/canal.properties:/home/admin/canal-server/conf/canal.properties
+            - ./logs/:/home/admin/canal-server/logs/
+        depends_on:
+             - canal-admin
+        networks:
+            lnmp:
+                aliases:
+                    - canal-server
+
+    canal-admin:
+        image: canal/canal-admin
+        container_name: canal-admin
+        ports:
+            - "8089:8089"
+        volumes:
+            - ./conf/admin/application.yml:/home/admin/canal-admin/conf/application.yml
+            - ./conf/admin/canal-template.properties:/home/admin/canal-admin/conf/canal-template.properties
+            - ./conf/admin/instance-template.properties:/home/admin/canal-admin/conf/instance-template.properties
+            - ./logs/:/home/admin/canal-admin/logs/
+        networks:
+            lnmp:
+                aliases:
+                    - canal-admin
+networks:
+    lnmp:
+        external:
+            name: docker
